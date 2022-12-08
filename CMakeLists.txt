@@ -7,4 +7,4 @@ find_package(KF5Plasma)
 
 add_subdirectory(translations)
 
-plasma_install_package(package org.kde.uptimeWidget)
+plasma_install_package(package org.enova.uptimeWidget)

@@ -6,6 +6,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     
     property alias cfg_squareLayout: squareLayout.checked
+    property alias cfg_fillIndicators: fillIndicators.checked
+    property alias cfg_strokeWidth: strokeWidth.value
     
     property alias cfg_enableDays: enableDays.checked
     property alias cfg_daysFullCircle: daysFullCircle.checked
@@ -29,10 +31,29 @@ Item {
 
     Column {
         spacing: 15
-        
+
         CheckBox {
             id: squareLayout
             text: i18n('Square layout')
+        }
+
+        CheckBox {
+            id: fillIndicators
+            text: i18n('Fill Indicators')
+        }
+
+        Label {
+            id: strokeWidthLabel
+            text: i18n('Stroke Width') + ": " + strokeWidth.value
+        }
+
+        Slider {
+            id: strokeWidth
+            minimumValue: 1
+            maximumValue: 10
+            stepSize: 1
+            tickmarksEnabled: true
+            enabled: !fillIndicators.checked
         }
         
         GridLayout {

@@ -22,23 +22,25 @@ import QtQuick.Controls 1.3
 Item {
     id: compactRepresentation
     
+    property bool fillIndicators
     property bool daysFullCircle
     property bool hoursFullCircle
     property bool minutesFullCircle
-    
-    property double parentWidth: parent.width
-    property double parentHeight: parent.height
+    property int strokeWidth
+
+    property double parentWidth: Plasmoid.parent.width
+    property double parentHeight: Plasmoid.parent.height
     
     property double numberOfParts: squareLayout ? 1 : (0 + (enableDays ? 1 : 0) + (enableHours ? 1 : 0) + (enableMinutes ? 1 : 0) + (enableSeconds ? 1 : 0))
     property double ratio: numberOfParts
     property double widgetWidth:  0
     property double widgetHeight: widgetWidth / numberOfParts
-    
+
     onParentWidthChanged: setWidgetSize()
     onParentHeightChanged: setWidgetSize()
-    
+
     onRatioChanged: setWidgetSize()
-    
+
     function setWidgetSize() {
         if (!parentHeight) {
             return
@@ -49,18 +51,18 @@ Item {
         } else if (vertical) {
             restrictToWidth = true
         }
-        widgetWidth = restrictToWidth ? parent.width : parent.height * numberOfParts
+        widgetWidth = restrictToWidth ? parentWidth : parentHeight * numberOfParts
     }
-    
+
     Component.onCompleted: setWidgetSize()
-    
+
     property double partSize: squareLayout ? widgetHeight / 2 : widgetHeight
     property int seconds
-    
+
     Layout.preferredWidth: widgetWidth
     Layout.preferredHeight: widgetHeight
     Layout.maximumHeight: widgetHeight
-    
+
     property double fontPixelSize: partSize * 0.55
     
     property bool mouseIn: false
@@ -71,6 +73,18 @@ Item {
     onDaysFullCircleChanged: daysCircle.repaint()
     onHoursFullCircleChanged: hoursCircle.repaint()
     onMinutesFullCircleChanged: minsCircle.repaint()
+    onFillIndicatorsChanged: {
+        daysCircle.repaint()
+        hoursCircle.repaint()
+        minsCircle.repaint()
+        secsCircle.repaint()
+    }
+    onStrokeWidthChanged: {
+        daysCircle.repaint()
+        hoursCircle.repaint()
+        minsCircle.repaint()
+        secsCircle.repaint()
+    }
     
     onSecondsChanged: {
         var secs = seconds
@@ -104,10 +118,10 @@ Item {
     }
     
     GridLayout {
-        
+
         Layout.preferredWidth: widgetWidth
         Layout.preferredHeight: widgetHeight
-        
+
         anchors.centerIn: parent
         
         columns: squareLayout ? 2 : 4
@@ -121,6 +135,8 @@ Item {
             showNumber: daysShowNumber
             showLabel: daysShowLabel
             visible: enableDays
+            fill: fillIndicators
+            lineWidth: strokeWidth
         }
         
         CircleText {
@@ -131,6 +147,8 @@ Item {
             showNumber: hoursShowNumber
             showLabel: hoursShowLabel
             visible: enableHours
+            fill: fillIndicators
+            lineWidth: strokeWidth
         }
         
         CircleText {
@@ -141,6 +159,8 @@ Item {
             showNumber: minutesShowNumber
             showLabel: minutesShowLabel
             visible: enableMinutes
+            fill: fillIndicators
+            lineWidth: strokeWidth
         }
         
         CircleText {
@@ -151,6 +171,8 @@ Item {
             showNumber: secondsShowNumber
             showLabel: secondsShowLabel
             visible: enableSeconds
+            fill: fillIndicators
+            lineWidth: strokeWidth
         }
     }
     

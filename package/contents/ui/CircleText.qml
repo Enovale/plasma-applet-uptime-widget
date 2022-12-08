@@ -28,16 +28,19 @@ Item {
     property bool fullCircle
     property bool showNumber
     property bool showLabel
+
+    property int lineWidth: 1
+    property bool fill: true
     
     property double circleOpacity: 1
     
     property double stdThickness: partSize/2.1
     property double circleThicknessAttr: fullCircle ? 0 : stdThickness * 0.9
     property double pi2: Math.PI * 2
-    
+
     Layout.preferredWidth: partSize
     Layout.preferredHeight: partSize
-    
+
     width: partSize
     height: partSize
 
@@ -52,9 +55,6 @@ Item {
     Canvas {
         id: canvas
 
-        property int lineWidth: 1
-        property bool fill: true
-        property bool stroke: true
         property real alpha: 1.0
 
         // edge bleeding fix
@@ -69,17 +69,23 @@ Item {
             var ctx = getContext('2d')
             ctx.clearRect(0, 0, canvas.width, canvas.height)
             ctx.fillStyle = theme.highlightColor
+            ctx.strokeStyle = theme.highlightColor
+            ctx.lineWidth = lineWidth
 
             var startRadian = - Math.PI / 2
 
             var radians = pi2 * proportion
-            
+
             ctx.beginPath();
             ctx.arc(width/2, height/2, stdThickness, startRadian, startRadian + radians + filler, false)
-            ctx.arc(width/2, height/2, circleThicknessAttr, startRadian + radians + filler, startRadian, true)
             
-            ctx.closePath()
-            ctx.fill()
+            if(fill) {
+                ctx.arc(width/2, height/2, circleThicknessAttr, startRadian + radians + filler, startRadian, true)
+                ctx.closePath()
+                ctx.fill()
+            }
+            else
+                ctx.stroke()
         }
     }
     

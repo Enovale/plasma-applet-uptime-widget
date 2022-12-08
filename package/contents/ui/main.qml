@@ -30,6 +30,8 @@ Item {
     property bool inTray: (plasmoid.parent === null || plasmoid.parent.objectName === 'taskItemContainer')
     
     property bool squareLayout: inTray || plasmoid.configuration.squareLayout
+    property bool fillIndicatorsSetting: plasmoid.configuration.fillIndicators
+    property int strokeWidthSetting: plasmoid.configuration.strokeWidth
     
     property bool enableDays: plasmoid.configuration.enableDays
     property bool daysFullCircleSetting: plasmoid.configuration.daysFullCircle
@@ -55,11 +57,13 @@ Item {
     
     property Component cr: CompactRepresentation {
         seconds: secondsValue
+        fillIndicators: fillIndicatorsSetting
         daysFullCircle: daysFullCircleSetting
         hoursFullCircle: hoursFullCircleSetting
         minutesFullCircle: minutesFullCircleSetting
+        strokeWidth: strokeWidthSetting
     }
-    
+
     Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
     Plasmoid.compactRepresentation: cr
     
@@ -67,24 +71,28 @@ Item {
         if (!inTray) {
             Plasmoid.fullRepresentation = cr
         }
+
+        dataSource.exec('cat /proc/uptime')
     }
     
     PlasmaCore.DataSource {
         id: dataSource
-        engine: 'systemmonitor'
+        engine: 'executable'
 
-        connectedSources: [ 'system/uptime' ]
-        
+        connectedSources: []
+
+        function exec(cmd) {
+            connectSource(cmd)
+        }
+
         onNewData: {
-            if (data.value === undefined) {
+            var value = data["stdout"];
+            if (value === undefined || value == "") {
                 return
             }
-            if (sourceName === 'system/uptime') {
-                var seconds = Math.round(data.value)
-                secondsValue = seconds
-            }
+            secondsValue = Math.round(value.split(' ')[0])
         }
-        interval: 1000
+        interval: enableSeconds ? 1000 : 60000
     }
     
 }
